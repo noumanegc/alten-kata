@@ -1,7 +1,7 @@
 nelmio_api_doc:
     documentation:
         servers:
-            - url: http://localhost:8000
+            - url: https://127.0.0.1:8080
               description: Local server
         info:
             title: API de Gestion des Produits
@@ -132,86 +132,6 @@ nelmio_api_doc:
                         '404':
                             description: 'Produit non trouvé'
 
-        components:
-            schemas:
-                Product:
-                    type: object
-                    description: 'Entité Product représentant un produit dans le catalogue'
-                    title: 'Product'
-                    properties:
-                        id:
-                            type: integer
-                            readOnly: true
-                            example: 1
-                        code:
-                            type: string
-                            example: "PROD-123"
-                            minLength: 3
-                            maxLength: 255
-                        name:
-                            type: string
-                            example: "Smartphone XYZ"
-                            minLength: 3
-                            maxLength: 255
-                        description:
-                            type: string
-                            nullable: true
-                            example: "Un smartphone dernière génération"
-                        image:
-                            type: string
-                            nullable: true
-                            example: "https://example.com/image.jpg"
-                        category:
-                            type: string
-                            example: "electronics"
-                        price:
-                            type: number
-                            format: float
-                            example: 599.99
-                        quantity:
-                            type: integer
-                            example: 50
-                        inventoryStatus:
-                            type: string
-                            enum: ['INSTOCK', 'LOWSTOCK', 'OUTOFSTOCK']
-                            description: "Statut du stock (géré automatiquement en fonction de la quantité)"
-                            example: "INSTOCK"
-                            readOnly: true
-                        internalReference:
-                            type: string
-                            nullable: true
-                            maxLength: 255
-                            pattern: '^[A-Za-z0-9\-_]+$'
-                            example: "REF-123"
-                            description: |
-                                Référence interne optionnelle.
-                                Ne peut contenir que des lettres, chiffres, tirets et underscores
-                        shellId:
-                            type: integer
-                            nullable: true
-                            minimum: 1
-                            example: 42
-                            description: "Identifiant externe optionnel. Doit être un nombre positif."
-                        rating:
-                            type: number
-                            format: float
-                            minimum: 0
-                            maximum: 5
-                            example: 4.5
-                        createdAt:
-                            type: string
-                            format: date-time
-                            readOnly: true
-                        updatedAt:
-                            type: string
-                            format: date-time
-                            readOnly: true
-                    required:
-                        - code
-                        - name
-                        - price
-                        - quantity
-                        - category
     areas: # to filter documented areas
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc

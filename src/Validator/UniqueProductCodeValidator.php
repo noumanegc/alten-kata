@@ -29,7 +29,7 @@ class UniqueProductCodeValidator extends ConstraintValidator
             return;
         }
 
-        $existingProduct = $this->productRepository->findOneBy(['code' => $value]);
+        $existingProduct = $this->productRepository->findOneBy(['code' => trim($value)]);
 
         if ($existingProduct && $existingProduct->getId() !== $constraint->excludeId) {
             $this->context->buildViolation($constraint->message)

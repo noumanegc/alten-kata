@@ -4,19 +4,22 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\DTO\PaginationDTO;
 use App\Entity\Product;
+use App\DTO\PaginationDTO;
 use Psr\Log\LoggerInterface;
+use App\Mapper\ProductMapper;
+use App\DTO\Product\CreateProductDTO;
+use App\DTO\Product\UpdateProductDTO;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\HttpKernel\Attribute\MapQueryString;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
-use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/api')]
 class ProductController extends AbstractController
@@ -24,15 +27,18 @@ class ProductController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private ProductRepository $productRepository,
+        private ProductMapper $productMapper,
         private LoggerInterface $logger
     ) {}
 
     #[Route('/products', methods: ['POST'])]
     public function create(
         Request $request,
-        #[MapRequestPayload(serializationContext: ['groups' => ['write']])] Product $product
+        #[MapRequestPayload] CreateProductDTO $dto
     ): JsonResponse {
         try {
+
+            $product = $this->productMapper->createProductFromDTO($dto);
 
             $this->entityManager->persist($product);
             $this->entityManager->flush();
@@ -46,7 +52,7 @@ class ProductController extends AbstractController
             ]);
 
             return $this->json(
-                ['error' => 'Données fournies non valides'],
+                ['error' => $e->getMessage()],
                 Response::HTTP_BAD_REQUEST
             );
         }
@@ -89,7 +95,7 @@ class ProductController extends AbstractController
     public function update(
         int $id,
         Request $request,
-        #[MapRequestPayload(serializationContext: ['groups' => ['write']])] Product $product
+        #[MapRequestPayload] UpdateProductDTO $dto
     ): Response {
         $product = $this->productRepository->find($id);
 
@@ -100,6 +106,7 @@ class ProductController extends AbstractController
         }
 
         try {
+            $this->productMapper->updateProductFromDTO($product, $dto);
             $this->entityManager->flush();
 
             return $this->json($product, Response::HTTP_OK, [], ['groups' => ['read']]);

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
-use App\Entity\Product;
 use App\DTO\PaginationDTO;
 use Psr\Log\LoggerInterface;
 use App\Mapper\ProductMapper;
@@ -52,7 +51,7 @@ class ProductController extends AbstractController
             ]);
 
             return $this->json(
-                ['error' => $e->getMessage()],
+                ['error' => 'Données fournies non valides'],
                 Response::HTTP_BAD_REQUEST
             );
         }

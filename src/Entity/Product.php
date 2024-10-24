@@ -90,7 +90,7 @@ class Product
 
     public function setCode(string $code): self
     {
-        $this->code = strtoupper(trim($code));
+        $this->code = trim($code);
 
         return $this;
     }

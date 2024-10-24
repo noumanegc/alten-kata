@@ -36,27 +36,45 @@ final class UpdateProductDTO
         )]
         public readonly ?string $category = null,
 
-        #[Assert\PositiveOrZero]
+        #[Assert\PositiveOrZero(message: 'Le prix ne peut pas être négatif')]
         public readonly ?float $price = null,
 
-        #[Assert\PositiveOrZero]
+        #[Assert\PositiveOrZero(message: 'La quantité ne peut pas être négative')]
         public readonly ?int $quantity = null,
 
-        #[Assert\Length(max: 5000)]
+        #[Assert\Length(
+            max: 5000,
+            maxMessage: 'La description ne peut pas dépasser {{ limit }} caractères'
+        )]
         public readonly ?string $description = null,
 
-        #[Assert\Length(max: 2048)]
-        #[Assert\Url]
+        #[Assert\Length(
+            max: 2048,
+            maxMessage: "L'URL de l'image ne peut pas dépasser {{ limit }} caractères"
+        )]
+        #[Assert\Url(
+            message: "L'URL de l'image n'est pas valide"
+        )]
         public readonly ?string $image = null,
 
-        #[Assert\Length(max: 255)]
-        #[Assert\Regex(pattern: '/^[A-Za-z0-9\-_]+$/')]
+        #[Assert\Length(
+            max: 255,
+            maxMessage: 'La référence interne ne peut pas dépasser {{ limit }} caractères'
+        )]
+        #[Assert\Regex(
+            pattern: '/^[A-Za-z0-9\-_]+$/',
+            message: 'La référence interne ne peut contenir que des lettres, chiffres, tirets et underscores'
+        )]
         public readonly ?string $internalReference = null,
 
-        #[Assert\Positive]
+        #[Assert\Positive(message: "L'ID externe doit être un nombre positif")]
         public readonly ?int $shellId = null,
 
-        #[Assert\Range(min: 0, max: 5)]
+        #[Assert\Range(
+            min: 0,
+            max: 5,
+            notInRangeMessage: 'La note doit être comprise entre {{ min }} et {{ max }}'
+        )]
         public readonly ?float $rating = null,
     ) {}
 }

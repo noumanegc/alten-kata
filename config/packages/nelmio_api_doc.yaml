@@ -1,12 +1,169 @@
 nelmio_api_doc:
     documentation:
         servers:
-            - url: https://127.0.0.1:8000
+            - url: https://127.0.0.1:8080
               description: Local server
         info:
             title: API de Gestion des Produits
             description: API permettant de gérer le catalogue de produits
             version: 1.0.0
+        components:
+            schemas:
+                Product:
+                    type: object
+                    properties:
+                        id:
+                            type: integer
+                            readOnly: true
+                        code:
+                            type: string
+                            minLength: 3
+                            maxLength: 255
+                        name:
+                            type: string
+                            minLength: 3
+                            maxLength: 255
+                        category:
+                            type: string
+                            minLength: 2
+                            maxLength: 100
+                        price:
+                            type: number
+                            format: float
+                            minimum: 0
+                        quantity:
+                            type: integer
+                            minimum: 0
+                        description:
+                            type: string
+                            maxLength: 5000
+                            nullable: true
+                        image:
+                            type: string
+                            maxLength: 2048
+                            nullable: true
+                        internalReference:
+                            type: string
+                            maxLength: 255
+                            nullable: true
+                        shellId:
+                            type: integer
+                            nullable: true
+                        inventoryStatus:
+                            type: string
+                            enum: [INSTOCK, LOWSTOCK, OUTOFSTOCK]
+                            readOnly: true
+                        rating:
+                            type: number
+                            format: float
+                            minimum: 0
+                            maximum: 5
+                        createdAt:
+                            type: string
+                            format: date-time
+                            readOnly: true
+                        updatedAt:
+                            type: string
+                            format: date-time
+                            readOnly: true
+                CreateProductDTO:
+                    type: object
+                    required:
+                        - code
+                        - name
+                        - category
+                        - price
+                        - quantity
+                    properties:
+                        code:
+                            type: string
+                            minLength: 3
+                            maxLength: 255
+                            description: "Code unique du produit"
+                        name:
+                            type: string
+                            minLength: 3
+                            maxLength: 255
+                        category:
+                            type: string
+                            minLength: 2
+                            maxLength: 100
+                        price:
+                            type: number
+                            format: float
+                            minimum: 0
+                        quantity:
+                            type: integer
+                            minimum: 0
+                        description:
+                            type: string
+                            maxLength: 5000
+                            nullable: true
+                        image:
+                            type: string
+                            maxLength: 2048
+                            nullable: true
+                        internalReference:
+                            type: string
+                            maxLength: 255
+                            nullable: true
+                        shellId:
+                            type: integer
+                            nullable: true
+                        rating:
+                            type: number
+                            format: float
+                            minimum: 0
+                            maximum: 5
+                            default: 0
+                UpdateProductDTO:
+                    type: object
+                    properties:
+                        code:
+                            type: string
+                            minLength: 3
+                            maxLength: 255
+                            nullable: true
+                        name:
+                            type: string
+                            minLength: 3
+                            maxLength: 255
+                            nullable: true
+                        category:
+                            type: string
+                            minLength: 2
+                            maxLength: 100
+                            nullable: true
+                        price:
+                            type: number
+                            format: float
+                            minimum: 0
+                            nullable: true
+                        quantity:
+                            type: integer
+                            minimum: 0
+                            nullable: true
+                        description:
+                            type: string
+                            maxLength: 5000
+                            nullable: true
+                        image:
+                            type: string
+                            maxLength: 2048
+                            nullable: true
+                        internalReference:
+                            type: string
+                            maxLength: 255
+                            nullable: true
+                        shellId:
+                            type: integer
+                            nullable: true
+                        rating:
+                            type: number
+                            format: float
+                            minimum: 0
+                            maximum: 5
+                            nullable: true
         paths:
             /api/products:
                 get:
@@ -56,7 +213,7 @@ nelmio_api_doc:
                         content:
                             application/json:
                                 schema:
-                                    $ref: '#/components/schemas/Product'
+                                    $ref: '#/components/schemas/CreateProductDTO'
                     responses:
                         '201':
                             description: 'Produit créé avec succès'
@@ -101,11 +258,11 @@ nelmio_api_doc:
                               type: integer
                     requestBody:
                         required: true
-                        description: "Note : L'inventoryStatus est automatiquement défini en fonction de la quantité"
+                        description: "Mise à jour partielle : envoyez uniquement les champs à modifier"
                         content:
                             application/json:
                                 schema:
-                                    $ref: '#/components/schemas/Product'
+                                    $ref: '#/components/schemas/UpdateProductDTO'
                     responses:
                         '200':
                             description: 'Produit mis à jour avec succès'
@@ -134,6 +291,6 @@ nelmio_api_doc:
                         '404':
                             description: 'Produit non trouvé'
 
-    areas: # to filter documented areas
+    areas:
         path_patterns:
-            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
+            - ^/api(?!/doc$)

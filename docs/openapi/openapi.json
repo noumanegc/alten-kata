@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000",
+            "url": "https://127.0.0.1:8080",
             "description": "Local server"
         }
     ],
@@ -86,7 +86,7 @@
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Product"
+                                "$ref": "#/components/schemas/CreateProductDTO"
                             }
                         }
                     }
@@ -189,12 +189,12 @@
                     }
                 ],
                 "requestBody": {
-                    "description": "Note : L'inventoryStatus est automatiquement d\u00e9fini en fonction de la quantit\u00e9",
+                    "description": "Mise \u00e0 jour partielle : envoyez uniquement les champs \u00e0 modifier",
                     "required": true,
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/Product"
+                                "$ref": "#/components/schemas/UpdateProductDTO"
                             }
                         }
                     }
@@ -224,56 +224,134 @@
         "schemas": {
             "Product": {
                 "properties": {
+                    "id": {
+                        "type": "integer",
+                        "readOnly": true
+                    },
                     "code": {
                         "type": "string",
-                        "default": "",
-                        "maxLength": 255,
-                        "minLength": 3,
-                        "pattern": "[A-Za-z0-9\\-_]+"
-                    },
-                    "name": {
-                        "type": "string",
-                        "default": "",
                         "maxLength": 255,
                         "minLength": 3
                     },
-                    "description": {
+                    "name": {
                         "type": "string",
-                        "maxLength": 5000,
-                        "nullable": true
-                    },
-                    "image": {
-                        "type": "string",
-                        "maxLength": 2048,
-                        "nullable": true
+                        "maxLength": 255,
+                        "minLength": 3
                     },
                     "category": {
                         "type": "string",
-                        "default": "",
                         "maxLength": 100,
                         "minLength": 2
                     },
                     "price": {
                         "type": "number",
                         "format": "float",
-                        "default": 0,
                         "minimum": 0
                     },
                     "quantity": {
-                        "title": "Met \u00e0 jour automatiquement le statut de stock en fonction de la quantit\u00e9",
                         "type": "integer",
-                        "default": 0,
                         "minimum": 0
                     },
+                    "description": {
+                        "type": "string|null",
+                        "maxLength": 5000,
+                        "nullable": true
+                    },
+                    "image": {
+                        "type": "string|null",
+                        "maxLength": 2048,
+                        "nullable": true
+                    },
                     "internalReference": {
+                        "type": "string|null",
+                        "maxLength": 255,
+                        "nullable": true
+                    },
+                    "shellId": {
+                        "type": "integer|null",
+                        "nullable": true
+                    },
+                    "inventoryStatus": {
                         "type": "string",
+                        "enum": [
+                            "INSTOCK",
+                            "LOWSTOCK",
+                            "OUTOFSTOCK"
+                        ],
+                        "readOnly": true
+                    },
+                    "rating": {
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 5,
+                        "minimum": 0
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    },
+                    "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "readOnly": true
+                    }
+                },
+                "type": "object"
+            },
+            "CreateProductDTO": {
+                "required": [
+                    "code",
+                    "name",
+                    "category",
+                    "price",
+                    "quantity"
+                ],
+                "properties": {
+                    "code": {
+                        "description": "Code unique du produit",
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 3,
+                        "pattern": "[A-Za-z0-9\\-_]+"
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 3
+                    },
+                    "category": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 2
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "minimum": 0
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "minimum": 0
+                    },
+                    "description": {
+                        "type": "string|null",
+                        "maxLength": 5000,
+                        "nullable": true
+                    },
+                    "image": {
+                        "type": "string|null",
+                        "maxLength": 2048,
+                        "nullable": true
+                    },
+                    "internalReference": {
+                        "type": "string|null",
                         "maxLength": 255,
                         "pattern": "[A-Za-z0-9\\-_]+",
                         "nullable": true
                     },
                     "shellId": {
-                        "type": "integer",
-                        "minimum": 0,
+                        "type": "integer|null",
                         "exclusiveMinimum": true,
                         "nullable": true
                     },
@@ -283,6 +361,71 @@
                         "default": 0,
                         "maximum": 5,
                         "minimum": 0
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateProductDTO": {
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 3,
+                        "pattern": "[A-Za-z0-9\\-_]+",
+                        "nullable": true
+                    },
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 3,
+                        "nullable": true
+                    },
+                    "category": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 2,
+                        "nullable": true
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "minimum": 0,
+                        "nullable": true
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "nullable": true
+                    },
+                    "description": {
+                        "type": "string|null",
+                        "maxLength": 5000,
+                        "nullable": true
+                    },
+                    "image": {
+                        "type": "string|null",
+                        "maxLength": 2048,
+                        "nullable": true
+                    },
+                    "internalReference": {
+                        "type": "string|null",
+                        "maxLength": 255,
+                        "pattern": "[A-Za-z0-9\\-_]+",
+                        "nullable": true
+                    },
+                    "shellId": {
+                        "type": "integer|null",
+                        "pattern": "[A-Za-z0-9\\-_]+",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "nullable": true
+                    },
+                    "rating": {
+                        "type": "number",
+                        "format": "float",
+                        "maximum": 5,
+                        "minimum": 0,
+                        "nullable": true
                     }
                 },
                 "type": "object"

@@ -41,10 +41,11 @@ class ProductRepository extends ServiceEntityRepository
         $total = $this->count([]);
 
         return [
-            'data' => $products,
+            'items' => $products,
             'total' => $total,
             'page' => $page,
-            'limit' => $limit
+            'limit' => $limit,
+            'lastPage' => ceil($total / $limit)
         ];
     }
 }

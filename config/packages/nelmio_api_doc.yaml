@@ -34,7 +34,7 @@ nelmio_api_doc:
                                     schema:
                                         type: object
                                         properties:
-                                            data:
+                                            items:
                                                 type: array
                                                 items:
                                                     $ref: '#/components/schemas/Product'
@@ -43,6 +43,8 @@ nelmio_api_doc:
                                             page:
                                                 type: integer
                                             limit:
+                                                type: integer
+                                            lastPage:
                                                 type: integer
                 post:
                     tags: ['Products']

@@ -22,16 +22,20 @@ class ProductRepository extends ServiceEntityRepository
      * Récupère la liste des produits avec pagination
      * 
      * @return array{
-     *     data: array<Product>,
+     *     items: list<Product>,
      *     total: int,
      *     page: int,
-     *     limit: int
+     *     limit: int,
+     *     lastPage: int
      * }
      */
     public function getPaginatedList(?int $page = 1, ?int $limit = 10): array
     {
+        $page = $page ?? 1;
+        $limit = $limit ?? 10;
         $offset = ($page - 1) * $limit;
 
+        /** @var list<Product> $products */
         $products = $this->createQueryBuilder('p')
             ->setMaxResults($limit)
             ->setFirstResult($offset)
@@ -45,7 +49,7 @@ class ProductRepository extends ServiceEntityRepository
             'total' => $total,
             'page' => $page,
             'limit' => $limit,
-            'lastPage' => ceil($total / $limit)
+            'lastPage' => (int) ceil($total / $limit)
         ];
     }
 }

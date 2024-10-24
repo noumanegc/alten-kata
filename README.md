@@ -141,6 +141,11 @@ docker compose exec php php bin/console doctrine:fixtures:load
 - API : http://localhost:8000/api
 - Documentation Swagger : http://localhost:8000/api/doc
 
+### Documentation de l'API
+La documentation de l'API est disponible sous plusieurs formats :
+- Interface Swagger UI : http://localhost:8000/api/doc
+- Fichier OpenAPI/Swagger : `/docs/openapi/openapi.json` (peut être importé dans Postman, Insomnia ou tout autre client API compatible OpenAPI)
+
 ### Endpoints disponibles
 - `GET /api/products` : Liste tous les produits
     - Paramètres de pagination :

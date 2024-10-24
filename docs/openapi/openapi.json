@@ -1,0 +1,314 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API de Gestion des Produits",
+        "description": "API permettant de g\u00e9rer le catalogue de produits",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/api/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "R\u00e9cup\u00e8re la liste des produits",
+                "operationId": "getAllProducts",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Num\u00e9ro de page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Nombre d'\u00e9l\u00e9ments par page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Liste des produits r\u00e9cup\u00e9r\u00e9e avec succ\u00e8s",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Product"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "page": {
+                                            "type": "integer"
+                                        },
+                                        "limit": {
+                                            "type": "integer"
+                                        },
+                                        "lastPage": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Cr\u00e9e un nouveau produit",
+                "operationId": "createProduct",
+                "requestBody": {
+                    "description": "Note : L'inventoryStatus est automatiquement d\u00e9fini en fonction de la quantit\u00e9",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Produit cr\u00e9\u00e9 avec succ\u00e8s",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Donn\u00e9es invalides"
+                    }
+                }
+            }
+        },
+        "/api/products/{id}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "R\u00e9cup\u00e8re les d\u00e9tails d'un produit",
+                "operationId": "getProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du produit",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "pattern": "[0-9]+"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Produit trouv\u00e9",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produit non trouv\u00e9"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Supprime un produit",
+                "operationId": "deleteProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du produit",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "pattern": "[0-9]+"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Produit supprim\u00e9 avec succ\u00e8s"
+                    },
+                    "404": {
+                        "description": "Produit non trouv\u00e9"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Met \u00e0 jour un produit",
+                "operationId": "updateProduct",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID du produit",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "pattern": "[0-9]+"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Note : L'inventoryStatus est automatiquement d\u00e9fini en fonction de la quantit\u00e9",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Product"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Produit mis \u00e0 jour avec succ\u00e8s",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Product"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Produit non trouv\u00e9"
+                    },
+                    "400": {
+                        "description": "Donn\u00e9es invalides"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Product": {
+                "properties": {
+                    "code": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 255,
+                        "minLength": 3,
+                        "pattern": "[A-Za-z0-9\\-_]+"
+                    },
+                    "name": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 255,
+                        "minLength": 3
+                    },
+                    "description": {
+                        "type": "string",
+                        "maxLength": 5000,
+                        "nullable": true
+                    },
+                    "image": {
+                        "type": "string",
+                        "maxLength": 2048,
+                        "nullable": true
+                    },
+                    "category": {
+                        "type": "string",
+                        "default": "",
+                        "maxLength": 100,
+                        "minLength": 2
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "default": 0,
+                        "minimum": 0
+                    },
+                    "quantity": {
+                        "title": "Met \u00e0 jour automatiquement le statut de stock en fonction de la quantit\u00e9",
+                        "type": "integer",
+                        "default": 0,
+                        "minimum": 0
+                    },
+                    "internalReference": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "pattern": "[A-Za-z0-9\\-_]+",
+                        "nullable": true
+                    },
+                    "shellId": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "exclusiveMinimum": true,
+                        "nullable": true
+                    },
+                    "rating": {
+                        "type": "number",
+                        "format": "float",
+                        "default": 0,
+                        "maximum": 5,
+                        "minimum": 0
+                    }
+                },
+                "type": "object"
+            },
+            "PaginationDTO": {
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "default": null,
+                        "minimum": 0
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "default": null,
+                        "maximum": 100,
+                        "minimum": 0
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Products",
+            "description": "Products"
+        }
+    ]
+}

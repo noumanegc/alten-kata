@@ -1,0 +1,217 @@
+nelmio_api_doc:
+    documentation:
+        servers:
+            - url: http://localhost:8000
+              description: Local server
+        info:
+            title: API de Gestion des Produits
+            description: API permettant de gérer le catalogue de produits
+            version: 1.0.0
+        paths:
+            /api/products:
+                get:
+                    tags: ['Products']
+                    summary: 'Récupère la liste des produits'
+                    operationId: 'getAllProducts'
+                    parameters:
+                        - name: page
+                          in: query
+                          description: 'Numéro de page'
+                          schema:
+                              type: integer
+                              default: 1
+                        - name: limit
+                          in: query
+                          description: "Nombre d'éléments par page"
+                          schema:
+                              type: integer
+                              default: 10
+                    responses:
+                        '200':
+                            description: 'Liste des produits récupérée avec succès'
+                            content:
+                                application/json:
+                                    schema:
+                                        type: object
+                                        properties:
+                                            data:
+                                                type: array
+                                                items:
+                                                    $ref: '#/components/schemas/Product'
+                                            total:
+                                                type: integer
+                                            page:
+                                                type: integer
+                                            limit:
+                                                type: integer
+                post:
+                    tags: ['Products']
+                    summary: 'Crée un nouveau produit'
+                    operationId: 'createProduct'
+                    requestBody:
+                        required: true
+                        description: "Note : L'inventoryStatus est automatiquement défini en fonction de la quantité"
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/Product'
+                    responses:
+                        '201':
+                            description: 'Produit créé avec succès'
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: '#/components/schemas/Product'
+                        '400':
+                            description: 'Données invalides'
+
+            '/api/products/{id}':
+                get:
+                    tags: ['Products']
+                    summary: "Récupère les détails d'un produit"
+                    operationId: 'getProduct'
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: 'ID du produit'
+                          schema:
+                              type: integer
+                    responses:
+                        '200':
+                            description: 'Produit trouvé'
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: '#/components/schemas/Product'
+                        '404':
+                            description: 'Produit non trouvé'
+                patch:
+                    tags: ['Products']
+                    summary: 'Met à jour un produit'
+                    operationId: 'updateProduct'
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: 'ID du produit'
+                          schema:
+                              type: integer
+                    requestBody:
+                        required: true
+                        description: "Note : L'inventoryStatus est automatiquement défini en fonction de la quantité"
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/Product'
+                    responses:
+                        '200':
+                            description: 'Produit mis à jour avec succès'
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: '#/components/schemas/Product'
+                        '404':
+                            description: 'Produit non trouvé'
+                        '400':
+                            description: 'Données invalides'
+                delete:
+                    tags: ['Products']
+                    summary: 'Supprime un produit'
+                    operationId: 'deleteProduct'
+                    parameters:
+                        - name: id
+                          in: path
+                          required: true
+                          description: 'ID du produit'
+                          schema:
+                              type: integer
+                    responses:
+                        '204':
+                            description: 'Produit supprimé avec succès'
+                        '404':
+                            description: 'Produit non trouvé'
+
+        components:
+            schemas:
+                Product:
+                    type: object
+                    description: 'Entité Product représentant un produit dans le catalogue'
+                    title: 'Product'
+                    properties:
+                        id:
+                            type: integer
+                            readOnly: true
+                            example: 1
+                        code:
+                            type: string
+                            example: "PROD-123"
+                            minLength: 3
+                            maxLength: 255
+                        name:
+                            type: string
+                            example: "Smartphone XYZ"
+                            minLength: 3
+                            maxLength: 255
+                        description:
+                            type: string
+                            nullable: true
+                            example: "Un smartphone dernière génération"
+                        image:
+                            type: string
+                            nullable: true
+                            example: "https://example.com/image.jpg"
+                        category:
+                            type: string
+                            example: "electronics"
+                        price:
+                            type: number
+                            format: float
+                            example: 599.99
+                        quantity:
+                            type: integer
+                            example: 50
+                        inventoryStatus:
+                            type: string
+                            enum: ['INSTOCK', 'LOWSTOCK', 'OUTOFSTOCK']
+                            description: "Statut du stock (géré automatiquement en fonction de la quantité)"
+                            example: "INSTOCK"
+                            readOnly: true
+                        internalReference:
+                            type: string
+                            nullable: true
+                            maxLength: 255
+                            pattern: '^[A-Za-z0-9\-_]+$'
+                            example: "REF-123"
+                            description: |
+                                Référence interne optionnelle.
+                                Ne peut contenir que des lettres, chiffres, tirets et underscores
+                        shellId:
+                            type: integer
+                            nullable: true
+                            minimum: 1
+                            example: 42
+                            description: "Identifiant externe optionnel. Doit être un nombre positif."
+                        rating:
+                            type: number
+                            format: float
+                            minimum: 0
+                            maximum: 5
+                            example: 4.5
+                        createdAt:
+                            type: string
+                            format: date-time
+                            readOnly: true
+                        updatedAt:
+                            type: string
+                            format: date-time
+                            readOnly: true
+                    required:
+                        - code
+                        - name
+                        - price
+                        - quantity
+                        - category
+    areas: # to filter documented areas
+        path_patterns:
+            - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
